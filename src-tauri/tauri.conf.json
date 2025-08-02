@@ -17,12 +17,13 @@
         "height": 450,
         "decorations": false,
         "transparent": true,
-        "visible": false,
+        "visible": true,
         "center": true,
         "skipTaskbar": false,
         "alwaysOnTop": true
       }
     ],
+    "macOSPrivateApi": true,
     "security": {
       "csp": null
     }
