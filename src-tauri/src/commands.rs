@@ -13,10 +13,16 @@ pub fn get_history() -> Vec<models::ClipboardItem> {
 
 #[tauri::command(rename_all = "snake_case")]
 pub fn paste_item(id: Uuid, window: tauri::Window) -> Option<()> {
-    if let Some(item) = HISTORY.get_item(id) {
+    if let Some(item) = HISTORY.promote_item(id) {
         let mut clipboard = arboard::Clipboard::new().ok()?;
         clipboard.set_text(item.content.clone()).ok()?;
         window.hide().ok()?;
     }
+    None
+}
+
+#[tauri::command]
+pub fn hide_window(window: tauri::Window) -> Option<()> {
+    window.hide().ok()?;
     None
 }
