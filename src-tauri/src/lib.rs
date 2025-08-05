@@ -29,11 +29,13 @@ pub fn run() {
                 })
                 .expect("Failed to set up global shortcut handler");
 
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
             commands::get_history,
-            commands::paste_item
+            commands::paste_item,
+            commands::hide_window
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

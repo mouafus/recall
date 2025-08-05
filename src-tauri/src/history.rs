@@ -3,7 +3,7 @@ use std::sync::Mutex;
 use tauri::{AppHandle, Emitter};
 
 pub struct History {
-   pub items: Mutex<Vec<ClipboardItem>>,
+    pub items: Mutex<Vec<ClipboardItem>>,
     app: Mutex<Option<AppHandle>>,
 }
 
@@ -11,7 +11,7 @@ impl History {
     pub fn new() -> Self {
         History {
             items: Mutex::new(vec![]),
-            app: Mutex::new(None)
+            app: Mutex::new(None),
         }
     }
 
@@ -20,7 +20,7 @@ impl History {
         *app_handle = Some(app);
     }
 
-    pub fn add(&self, content: String, content_type: String){
+    pub fn add(&self, content: String, content_type: String) {
         let mut items = self.items.lock().unwrap();
 
         if let Some(last) = items.first() {
@@ -52,9 +52,13 @@ impl History {
         items.clone()
     }
 
-    pub fn get_item(&self, id: uuid::Uuid) -> Option<ClipboardItem> {
-        let items = self.items.lock().unwrap();
-        items.iter().find(|item| item.id == id).cloned()
+    pub fn promote_item(&self, id: uuid::Uuid) -> Option<ClipboardItem> {
+        let mut items = self.items.lock().unwrap();
+        if let Some(item) = items.iter().position(|item| item.id == id) {
+            let item = items.remove(item);
+            items.insert(0, item.clone());
+            return Some(item);
+        }
+        None
     }
-    
 }
