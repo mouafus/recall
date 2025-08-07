@@ -6,9 +6,22 @@
     import {hide} from "@tauri-apps/api/app";
 
     let selectedIndex = 0;
-    $: clipboardItemList = derived([clipboard.order, clipboard.history], ([$order, $history]) =>
-        $order.map(id => $history.get(id)).filter(Boolean) as IClipboardItem[]
-    );
+    $: clipboardItemList = derived([clipboard.order, clipboard.history, clipboard.searchQuery], ([$order, $history, $searchQuery]) => {
+        const items = $order.map(id => $history.get(id)).filter(Boolean) as IClipboardItem[];
+
+        if (!$searchQuery) return items;
+
+        const query = $searchQuery.toLowerCase();
+        return items.filter(item =>
+            item.content && item.content.toLowerCase().includes(query)
+        );
+    });
+
+    $: {
+        if (selectedIndex >= $clipboardItemList.length && $clipboardItemList.length > 0) {
+            selectedIndex = 0;
+        }
+    }
 
     $: selectedItem = $clipboardItemList[selectedIndex] || null;
 
