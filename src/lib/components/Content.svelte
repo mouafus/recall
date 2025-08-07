@@ -69,7 +69,11 @@
         if (!text) {
             return '';
         }
-        return text.split('\n')[0].trim();
+        const firstLine = text.split('\n').find(line => line.trim().length > 0) || '';
+        if (firstLine.length > 50) {
+            return firstLine.slice(0, 50) + '...';
+        }
+        return text;
     }
 
 
