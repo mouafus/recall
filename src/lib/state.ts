@@ -10,6 +10,7 @@ export interface IClipboardItem {
 class ClipboardManager {
     public history: Writable<Map<string, IClipboardItem>>;
     public order: Writable<string[]>;
+    public searchQuery: Writable<string> = writable('');
     public selectedItem: Writable<IClipboardItem | undefined> = writable(undefined);
 
     constructor() {
