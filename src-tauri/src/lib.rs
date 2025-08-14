@@ -17,7 +17,7 @@ pub fn run() {
 
             let _clipboard_watcher = clipboard::start_clipboard_watcher();
 
-            let shortcut = "CmdOrCtrl+Shift+U";
+            let shortcut = "CmdOrCtrl+Shift+V";
 
             let _ = app
                 .global_shortcut()

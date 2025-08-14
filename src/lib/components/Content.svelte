@@ -1,7 +1,7 @@
 <script lang="ts">
     import {derived} from "svelte/store";
     import {clipboard, type IClipboardItem} from "$lib/state";
-    import {onMount} from "svelte";
+    import {onMount, onDestroy} from "svelte";
     import {invoke} from "@tauri-apps/api/core";
     import {hide} from "@tauri-apps/api/app";
 
@@ -76,6 +76,26 @@
         return text;
     }
 
+    let canvasEl: HTMLCanvasElement | null = null;
+
+    $: if (selectedItem && selectedItem.content_type.startsWith('image') && selectedItem.image_base64 && canvasEl) {
+        try {
+            const w = selectedItem.image_width ?? 0;
+            const h = selectedItem.image_height ?? 0;
+            if (w > 0 && h > 0) {
+                const bytes = Uint8Array.from(atob(selectedItem.image_base64), c => c.charCodeAt(0));
+                const ctx = canvasEl.getContext('2d');
+                if (ctx) {
+                    canvasEl.width = w;
+                    canvasEl.height = h;
+                    const imageData = new ImageData(new Uint8ClampedArray(bytes), w, h);
+                    ctx.putImageData(imageData, 0, 0);
+                }
+            }
+        } catch (e) {
+            // ignore drawing errors
+        }
+    }
 
 </script>
 
@@ -99,7 +119,11 @@
     </div>
     <div class="w-3/5 px-2 pt-2 pb-6 h-full overflow-y-auto select-text">
         {#if selectedItem}
-            <p class="whitespace-pre-wrap text-xs">{selectedItem.content}</p>
+            {#if selectedItem.content_type.startsWith('image') && selectedItem.image_base64}
+                <canvas bind:this={canvasEl} class="max-w-full h-auto border border-gray-500 rounded"/>
+            {:else}
+                <p class="whitespace-pre-wrap text-xs">{selectedItem.content}</p>
+            {/if}
         {/if}
         <div class="h-4"></div>
     </div>
@@ -110,4 +134,5 @@
     button {
         outline: none;
     }
+    canvas { display: block; }
 </style>

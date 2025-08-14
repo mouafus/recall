@@ -1,11 +1,7 @@
 import {writable, type Writable} from 'svelte/store';
+import type { ClipboardItem as GeneratedClipboardItem } from '$lib/bindings';
 
-export interface IClipboardItem {
-    id: string;
-    content: string;
-    content_type: string;
-    timestamp: number;
-}
+export type IClipboardItem = GeneratedClipboardItem;
 
 class ClipboardManager {
     public history: Writable<Map<string, IClipboardItem>>;

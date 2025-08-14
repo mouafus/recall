@@ -1,6 +1,7 @@
 use crate::history::History;
 use crate::models;
 use uuid::Uuid;
+use base64::Engine;
 
 lazy_static::lazy_static! {
     pub static ref HISTORY: History = History::new();
@@ -15,7 +16,21 @@ pub fn get_history() -> Vec<models::ClipboardItem> {
 pub fn paste_item(id: Uuid, window: tauri::Window) -> Option<()> {
     if let Some(item) = HISTORY.promote_item(id) {
         let mut clipboard = arboard::Clipboard::new().ok()?;
-        clipboard.set_text(item.content.clone()).ok()?;
+        if item.content_type.starts_with("image") {
+            if let (Some(b64), Some(w), Some(h)) = (&item.image_base64, item.image_width, item.image_height) {
+                let bytes = base64::engine::general_purpose::STANDARD.decode(b64).ok()?;
+                let img = arboard::ImageData {
+                    width: w as usize,
+                    height: h as usize,
+                    bytes: bytes.into(),
+                };
+                clipboard.set_image(img).ok()?;
+            } else {
+                clipboard.set_text(item.content.clone()).ok()?;
+            }
+        } else {
+            clipboard.set_text(item.content.clone()).ok()?;
+        }
         window.hide().ok()?;
     }
     None

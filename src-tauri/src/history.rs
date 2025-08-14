@@ -20,7 +20,14 @@ impl History {
         *app_handle = Some(app);
     }
 
-    pub fn add(&self, content: String, content_type: String) {
+    pub fn add(
+        &self,
+        content: String,
+        content_type: String,
+        image_base64: Option<String>,
+        image_width: Option<u32>,
+        image_height: Option<u32>,
+    ) {
         let mut items = self.items.lock().unwrap();
 
         if let Some(last) = items.first() {
@@ -34,6 +41,9 @@ impl History {
             content,
             content_type,
             timestamp: chrono::Utc::now().timestamp_millis(),
+            image_base64,
+            image_width,
+            image_height,
         };
 
         items.insert(0, item.clone());
@@ -60,5 +70,12 @@ impl History {
             return Some(item);
         }
         None
+    }
+
+    pub fn remove_by_content(&self, content: &str) {
+        let mut items = self.items.lock().unwrap();
+        if let Some(pos) = items.iter().position(|item| item.content == content) {
+            items.remove(pos);
+        }
     }
 }
