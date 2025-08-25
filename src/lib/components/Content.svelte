@@ -1,7 +1,7 @@
 <script lang="ts">
     import {derived} from "svelte/store";
     import {clipboard, type IClipboardItem} from "$lib/state";
-    import {onMount, onDestroy} from "svelte";
+    import {onMount} from "svelte";
     import {invoke} from "@tauri-apps/api/core";
     import {hide} from "@tauri-apps/api/app";
 
@@ -126,7 +126,7 @@
     <div class="w-3/5 px-2 pt-2 pb-6 h-full overflow-y-auto select-text">
         {#if selectedItem}
             {#if selectedItem.content_type.startsWith('image') && selectedItem.image_base64}
-                <canvas bind:this={canvasEl} class="max-w-full h-auto border border-gray-500 rounded"/>
+                <canvas bind:this={canvasEl} class="max-w-full h-auto border border-gray-500 rounded"></canvas>
             {:else}
                 <p class="whitespace-pre-wrap text-xs">{selectedItem.content}</p>
             {/if}

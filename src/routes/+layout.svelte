@@ -2,7 +2,7 @@
     import "../app.css";
     import {invoke} from "@tauri-apps/api/core";
     import {onMount} from "svelte";
-    import { clipboard, type IClipboardItem } from '$lib/state';
+    import {clipboard, type IClipboardItem} from '$lib/state';
     import {listen} from "@tauri-apps/api/event";
 
     listen<IClipboardItem>('new-clipboard-item', (event) => {
