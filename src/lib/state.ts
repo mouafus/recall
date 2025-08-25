@@ -16,11 +16,23 @@ class ClipboardManager {
     }
 
     add(item: IClipboardItem) {
+        const removedIds: string[] = [];
         this.history.update((map) => {
-            map.set(item.id, item);
-            return map;
+            const newMap = new Map(map);
+            for (const [id, it] of newMap) {
+                if (id !== item.id && it.content === item.content) {
+                    newMap.delete(id);
+                    removedIds.push(id);
+                }
+            }
+            newMap.set(item.id, item);
+            return newMap;
         });
-        this.order.update((arr) => [item.id, ...arr]);
+        this.order.update((arr) => {
+            const next = arr.filter((id) => id !== item.id && !removedIds.includes(id));
+            next.unshift(item.id);
+            return next;
+        });
     }
 
     set(items: IClipboardItem[]) {
@@ -36,12 +48,13 @@ class ClipboardManager {
 
     promote(id: string) {
         this.order.update((arr) => {
-            const index = arr.indexOf(id);
+            const next = arr.slice();
+            const index = next.indexOf(id);
             if (index > -1) {
-                arr.splice(index, 1);
+                next.splice(index, 1);
             }
-            arr.unshift(id);
-            return arr;
+            next.unshift(id);
+            return next;
         });
     }
 

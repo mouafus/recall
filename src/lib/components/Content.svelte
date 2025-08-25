@@ -26,21 +26,26 @@
     $: selectedItem = $clipboardItemList[selectedIndex] || null;
 
     async function handleKeydown(event: KeyboardEvent) {
+        const len = $clipboardItemList.length;
         if (event.key === 'ArrowDown') {
             event.preventDefault();
-            selectedIndex = (selectedIndex + 1) % $clipboardItemList.length;
+            if (len === 0) return;
+            selectedIndex = (selectedIndex + 1) % len;
             if ($clipboardItemList[selectedIndex]) {
                 selectedItem = $clipboardItemList[selectedIndex];
             }
         } else if (event.key === 'ArrowUp') {
             event.preventDefault();
-            selectedIndex = (selectedIndex - 1 + $clipboardItemList.length) % $clipboardItemList.length;
+            if (len === 0) return;
+            selectedIndex = (selectedIndex - 1 + len) % len;
             if ($clipboardItemList[selectedIndex]) {
                 selectedItem = $clipboardItemList[selectedIndex];
             }
         } else if (event.key === 'Enter') {
             event.preventDefault();
-            await handlePasteItem()
+            if (selectedItem) {
+                await handlePasteItem();
+            }
         }
     }
 
@@ -108,7 +113,8 @@
                     tabindex={index}
                     on:click={() => {
             if(item){
-                selectedItem= item;
+                selectedItem = item;
+                selectedIndex = index;
             }
         }}
             >
