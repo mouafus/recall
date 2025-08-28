@@ -120,6 +120,13 @@
             <button
                     class="py-2 px-1.5 text-sm rounded-md text-white w-full {selectedItem.id === item.id ? 'bg-[#323335]' : ''} text-left truncate select-none"
                     tabindex={index}
+                    on:dblclick={async () => {
+        if(item){
+            selectedItem = item;
+            selectedIndex = index;
+            await handlePasteItem();
+        }
+    }}
                     on:click={() => {
             if(item){
                 selectedItem = item;
@@ -149,5 +156,8 @@
     button {
         outline: none;
     }
-    canvas { display: block; }
+
+    canvas {
+        display: block;
+    }
 </style>
