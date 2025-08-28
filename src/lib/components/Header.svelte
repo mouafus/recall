@@ -31,7 +31,6 @@
 <div class="px-4 pb-2 select-none border-b border-b-gray-400 ">
     <div class="relative flex items-center w-full max-w-2xl mx-auto">
         <input
-                autofocus
                 id="search-input"
                 type="text"
                 bind:value={searchValue}
