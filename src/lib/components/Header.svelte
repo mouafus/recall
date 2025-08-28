@@ -1,5 +1,6 @@
 <script lang="ts">
     import {clipboard} from "$lib/state";
+    import {onMount} from "svelte";
 
     let searchValue = "";
 
@@ -13,6 +14,16 @@
             document.getElementById('search-input')?.focus();
         }
     }
+
+    onMount(() => {
+        const reset = () => {
+            searchValue = "";
+        };
+        window.addEventListener('reset-filters', reset);
+        return () => {
+            window.removeEventListener('reset-filters', reset);
+        };
+    });
 </script>
 
 <svelte:window on:keydown={handleKeydown}/>

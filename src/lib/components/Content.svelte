@@ -64,8 +64,17 @@
             selectedItem = $clipboardItemList[0];
         }
 
+        const handleReset = () => {
+            selectedIndex = 0;
+            if ($clipboardItemList.length > 0) {
+                selectedItem = $clipboardItemList[0];
+            }
+        };
+
+        window.addEventListener('reset-filters', handleReset);
         document.addEventListener('keydown', handleKeydown);
         return () => {
+            window.removeEventListener('reset-filters', handleReset);
             document.removeEventListener('keydown', handleKeydown);
         };
     });

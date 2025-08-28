@@ -25,6 +25,11 @@
             await invoke('hide_window');
         });
 
+        listen("tauri://focus", async () => {
+            clipboard.searchQuery.set("");
+            window.dispatchEvent(new CustomEvent("reset-filters"));
+        });
+
         document.addEventListener('keydown', handleKeydown);
         return () => {
             document.removeEventListener('keydown', handleKeydown);
