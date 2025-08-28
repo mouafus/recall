@@ -17,6 +17,44 @@ pub fn run() {
 
             let _clipboard_watcher = clipboard::start_clipboard_watcher();
 
+            #[cfg(any(target_os = "linux"))]
+            {
+                use tauri::menu::{Menu, MenuItem};
+                use tauri::tray::TrayIconBuilder;
+
+                let show_history = MenuItem::with_id(app, "show_history", "Historique", true, None::<&str>)
+                    .expect("failed to create 'Historique' menu item");
+                let quit_item = MenuItem::with_id(app, "quit", "Quitter", true, None::<&str>)
+                    .expect("failed to create 'Quitter' menu item");
+                let menu = Menu::with_items(app, &[&show_history, &quit_item])
+                    .expect("failed to build tray menu");
+
+                
+                let mut tray_builder = TrayIconBuilder::new()
+                    .tooltip("Recall")
+                    .menu(&menu)
+                    .on_menu_event(|app, event| match event.id().as_ref() {
+                        "show_history" => {
+                            if let Some(window) = app.get_webview_window("main") {
+                                let _ = window.show();
+                                let _ = window.set_focus();
+                            }
+                        }
+                        "quit" => {
+                            app.exit(0);
+                        }
+                        _ => {}
+                    });
+
+                if let Some(icon) = app.default_window_icon() {
+                    tray_builder = tray_builder.icon(icon.clone());
+                }
+
+                let _tray = tray_builder
+                    .build(app)
+                    .expect("failed to build tray icon");
+            }
+
             let shortcut = "CmdOrCtrl+Shift+V";
 
             let _ = app
@@ -28,7 +66,6 @@ pub fn run() {
                     }
                 })
                 .expect("Failed to set up global shortcut handler");
-
 
             Ok(())
         })
