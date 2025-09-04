@@ -1,7 +1,7 @@
 name: recall
 base: core22
 version: '0.1.0'
-summary: Gestionnaire de presse-papiers et outil de mémorisation
+summary: Gestionnaire de presse-papiers
 description: |
   Recall est une application légère et rapide qui vous permet de stocker,
   organiser et retrouver facilement les éléments de votre presse-papiers.
@@ -10,6 +10,7 @@ description: |
 
 grade: stable
 confinement: strict
+license: MIT
 
 layout:
   /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/webkit2gtk-4.1:
@@ -21,19 +22,12 @@ apps:
     desktop: usr/share/applications/recall.desktop
     extensions: [ gnome ]
     plugs:
-      - network
-      - home
       - removable-media
-      - desktop
-      - wayland
-      - x11
 
 parts:
   build-app:
     plugin: dump
-    build-snaps:
-      - node/20/stable
-      - rustup/latest/stable
+    source: .
     build-packages:
       - libwebkit2gtk-4.1-dev
       - build-essential
@@ -45,16 +39,16 @@ parts:
       - libayatana-appindicator3-dev
       - librsvg2-dev
       - dpkg
-      - libxcb-shape0-dev
-      - libxcb-xfixes0-dev
+      - pkg-config
     stage-packages:
       - libwebkit2gtk-4.1-0
       - libayatana-appindicator3-1
-    source: .
+      - libxcb-shape0
+      - libatk-adaptor
     override-build: |
-      set -eu
-      rustup default stable
+      set -eux
+      curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain stable
+      export PATH="$HOME/.cargo/bin:$PATH"
       npm install
       npm run tauri build -- --bundles deb
-      dpkg -x target/release/bundle/deb/*.deb $SNAPCRAFT_PART_INSTALL/
-      sed -i -e "s|Icon=recall|Icon=/usr/share/icons/hicolor/32x32/apps/recall.png|g" $SNAPCRAFT_PART_INSTALL/usr/share/applications/recall.desktop
+      dpkg -x target/release/bundle/deb/*.deb "$SNAPCRAFT_PART_INSTALL/"
