@@ -1,7 +1,7 @@
 use crate::history::History;
 use crate::models;
-use uuid::Uuid;
 use base64::Engine;
+use uuid::Uuid;
 
 lazy_static::lazy_static! {
     pub static ref HISTORY: History = History::new();
@@ -17,7 +17,9 @@ pub fn paste_item(id: Uuid, window: tauri::Window) -> Option<()> {
     if let Some(item) = HISTORY.promote_item(id) {
         let mut clipboard = arboard::Clipboard::new().ok()?;
         if item.content_type.starts_with("image") {
-            if let (Some(b64), Some(w), Some(h)) = (&item.image_base64, item.image_width, item.image_height) {
+            if let (Some(b64), Some(w), Some(h)) =
+                (&item.image_base64, item.image_width, item.image_height)
+            {
                 let bytes = base64::engine::general_purpose::STANDARD.decode(b64).ok()?;
                 let img = arboard::ImageData {
                     width: w as usize,

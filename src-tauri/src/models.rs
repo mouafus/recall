@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 use ts_rs::TS;
+use uuid::Uuid;
 
 #[derive(TS, Serialize, Deserialize, Debug, Clone)]
 #[ts(export, export_to = "../../src/lib/bindings.ts")]

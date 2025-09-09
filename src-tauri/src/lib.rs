@@ -4,14 +4,23 @@ mod history;
 mod models;
 
 use tauri::Manager;
+use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
 use tauri_plugin_global_shortcut::GlobalShortcutExt;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_autostart::init(
+            MacosLauncher::LaunchAgent,
+            Some(vec!["--flag1", "--flag2"]),
+        ))
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .setup(|app| {
+
             let app_handle = app.handle().clone();
+
+            let autostart_manager = app.autolaunch();
+            let _ = autostart_manager.enable();
 
             crate::commands::HISTORY.set_app(app_handle.clone());
 
@@ -22,14 +31,14 @@ pub fn run() {
                 use tauri::menu::{Menu, MenuItem};
                 use tauri::tray::TrayIconBuilder;
 
-                let show_history = MenuItem::with_id(app, "show_history", "Historique", true, None::<&str>)
-                    .expect("failed to create 'Historique' menu item");
+                let show_history =
+                    MenuItem::with_id(app, "show_history", "Historique", true, None::<&str>)
+                        .expect("failed to create 'Historique' menu item");
                 let quit_item = MenuItem::with_id(app, "quit", "Quitter", true, None::<&str>)
                     .expect("failed to create 'Quitter' menu item");
                 let menu = Menu::with_items(app, &[&show_history, &quit_item])
                     .expect("failed to build tray menu");
 
-                
                 let mut tray_builder = TrayIconBuilder::new()
                     .tooltip("Recall")
                     .menu(&menu)
@@ -50,9 +59,7 @@ pub fn run() {
                     tray_builder = tray_builder.icon(icon.clone());
                 }
 
-                let _tray = tray_builder
-                    .build(app)
-                    .expect("failed to build tray icon");
+                let _tray = tray_builder.build(app).expect("failed to build tray icon");
             }
 
             let shortcut = "CmdOrCtrl+Shift+V";

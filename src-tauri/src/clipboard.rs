@@ -1,8 +1,8 @@
-use arboard::Clipboard;
 use crate::commands::HISTORY;
+use arboard::Clipboard;
+use base64::Engine;
 use clipboard_master::{CallbackResult, ClipboardHandler, Master};
 use std::{io, thread};
-use base64::Engine;
 
 pub struct Handler {
     clipboard: Clipboard,
@@ -43,7 +43,8 @@ impl ClipboardHandler for Handler {
         if let Ok(img) = self.clipboard.get_image() {
             let content = format!("[image {}x{}]", img.width, img.height);
             if !content.is_empty() {
-                let image_base64 = Some(base64::engine::general_purpose::STANDARD.encode(&img.bytes));
+                let image_base64 =
+                    Some(base64::engine::general_purpose::STANDARD.encode(&img.bytes));
                 HISTORY.remove_by_content(&content);
                 HISTORY.add(
                     content,
