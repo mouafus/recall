@@ -5,6 +5,7 @@ use tauri::{AppHandle, Emitter};
 pub struct History {
     pub items: Mutex<Vec<ClipboardItem>>,
     app: Mutex<Option<AppHandle>>,
+    max_item: Mutex<usize>,
 }
 
 impl History {
@@ -12,12 +13,18 @@ impl History {
         History {
             items: Mutex::new(vec![]),
             app: Mutex::new(None),
+            max_item: Mutex::new(200),
         }
     }
 
     pub fn set_app(&self, app: AppHandle) {
         let mut app_handle = self.app.lock().unwrap();
         *app_handle = Some(app);
+    }
+
+    pub fn set_max_item(&self, max: usize) {
+        let mut m = self.max_item.lock().unwrap();
+        *m = max;
     }
 
     pub fn add(
@@ -48,8 +55,9 @@ impl History {
 
         items.insert(0, item.clone());
 
-        if items.len() > 200 {
-            items.pop();
+        let max_history_item = *self.max_item.lock().unwrap();
+        if items.len() > max_history_item {
+            items.truncate(max_history_item);
         }
 
         if let Some(app) = self.app.lock().unwrap().as_ref() {

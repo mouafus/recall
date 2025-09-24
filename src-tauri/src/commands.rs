@@ -1,6 +1,10 @@
 use crate::history::History;
 use crate::models;
+use crate::settings;
 use base64::Engine;
+use tauri::Manager;
+use tauri_plugin_autostart::ManagerExt as _;
+use tauri_plugin_global_shortcut::GlobalShortcutExt as _;
 use uuid::Uuid;
 
 lazy_static::lazy_static! {
@@ -42,4 +46,33 @@ pub fn paste_item(id: Uuid, window: tauri::Window) -> Option<()> {
 pub fn hide_window(window: tauri::Window) -> Option<()> {
     window.hide().ok()?;
     None
+}
+
+#[tauri::command]
+pub fn get_settings(app: tauri::AppHandle) -> settings::Settings {
+    settings::load_settings(&app)
+}
+
+#[tauri::command]
+pub fn update_settings(app: tauri::AppHandle, s: settings::Settings) -> Result<(), String> {
+    let old = settings::load_settings(&app);
+
+    settings::save_settings(&app, &s).map_err(|e| e.to_string())?;
+
+    let mgr = app.autolaunch();
+    if s.autostart { mgr.enable().map_err(|e| e.to_string())?; } else { mgr.disable().map_err(|e| e.to_string())?; }
+
+    HISTORY.set_max_item(s.max_items);
+
+    let gs = app.global_shortcut();
+
+    let _ = gs.unregister(old.shortcut.as_str());
+    gs.on_shortcut(s.shortcut.as_str(), move |app, _, _| {
+        if let Some(win) = app.get_webview_window("main") {
+            let _ = win.show();
+            let _ = win.set_focus();
+        }
+    }).map_err(|e| format!("register failed: {e}"))?;
+
+    Ok(())
 }
