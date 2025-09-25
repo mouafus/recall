@@ -21,9 +21,11 @@
             clipboard.set(result as IClipboardItem[]);
         })
 
-        listen("tauri://blur", async () => {
-            await invoke('hide_window');
-        });
+        if (window.location.pathname !== "/settings") {
+            listen("tauri://blur", async () => {
+                await invoke('hide_window');
+            });
+        }
 
         listen("tauri://focus", async () => {
             clipboard.searchQuery.set("");
