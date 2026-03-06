@@ -17,29 +17,29 @@ pub fn get_history() -> Vec<models::ClipboardItem> {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn paste_item(id: Uuid, window: tauri::Window) -> Option<()> {
-    if let Some(item) = HISTORY.promote_item(id) {
-        let mut clipboard = arboard::Clipboard::new().ok()?;
-        if item.content_type.starts_with("image") {
-            if let (Some(b64), Some(w), Some(h)) =
-                (&item.image_base64, item.image_width, item.image_height)
-            {
-                let bytes = base64::engine::general_purpose::STANDARD.decode(b64).ok()?;
-                let img = arboard::ImageData {
-                    width: w as usize,
-                    height: h as usize,
-                    bytes: bytes.into(),
-                };
-                clipboard.set_image(img).ok()?;
-            } else {
-                clipboard.set_text(item.content.clone()).ok()?;
-            }
+pub fn paste_item(id: Uuid) -> Result<(), String> {
+    let item = HISTORY.promote_item(id).ok_or("Item not found")?;
+    let mut clipboard = arboard::Clipboard::new().map_err(|e| e.to_string())?;
+    if item.content_type.starts_with("image") {
+        if let (Some(b64), Some(w), Some(h)) =
+            (&item.image_base64, item.image_width, item.image_height)
+        {
+            let bytes = base64::engine::general_purpose::STANDARD
+                .decode(b64)
+                .map_err(|e| e.to_string())?;
+            let img = arboard::ImageData {
+                width: w as usize,
+                height: h as usize,
+                bytes: bytes.into(),
+            };
+            clipboard.set_image(img).map_err(|e| e.to_string())?;
         } else {
-            clipboard.set_text(item.content.clone()).ok()?;
+            clipboard.set_text(item.content.clone()).map_err(|e| e.to_string())?;
         }
-        window.hide().ok()?;
+    } else {
+        clipboard.set_text(item.content.clone()).map_err(|e| e.to_string())?;
     }
-    None
+    Ok(())
 }
 
 #[tauri::command]

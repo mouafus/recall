@@ -31,16 +31,10 @@
             event.preventDefault();
             if (len === 0) return;
             selectedIndex = (selectedIndex + 1) % len;
-            if ($clipboardItemList[selectedIndex]) {
-                selectedItem = $clipboardItemList[selectedIndex];
-            }
         } else if (event.key === 'ArrowUp') {
             event.preventDefault();
             if (len === 0) return;
             selectedIndex = (selectedIndex - 1 + len) % len;
-            if ($clipboardItemList[selectedIndex]) {
-                selectedItem = $clipboardItemList[selectedIndex];
-            }
         } else if (event.key === 'Enter') {
             event.preventDefault();
             if (selectedItem) {
@@ -53,22 +47,15 @@
         if ($clipboardItemList[selectedIndex]) {
             const itemId = $clipboardItemList[selectedIndex].id;
             await invoke('paste_item', {id: itemId});
-            clipboard.promote(itemId)
+            clipboard.promote(itemId);
         }
         await hide();
     }
 
 
     onMount(() => {
-        if ($clipboardItemList.length > 0) {
-            selectedItem = $clipboardItemList[0];
-        }
-
         const handleReset = () => {
             selectedIndex = 0;
-            if ($clipboardItemList.length > 0) {
-                selectedItem = $clipboardItemList[0];
-            }
         };
 
         window.addEventListener('reset-filters', handleReset);
@@ -122,14 +109,12 @@
                     tabindex={index}
                     on:dblclick={async () => {
         if(item){
-            selectedItem = item;
             selectedIndex = index;
             await handlePasteItem();
         }
     }}
                     on:click={() => {
             if(item){
-                selectedItem = item;
                 selectedIndex = index;
             }
         }}

@@ -57,9 +57,8 @@ impl History {
     }
 
     pub fn set_app(&self, app: AppHandle) {
-        let mut app_handle = self.app.lock().unwrap();
         self.load_from_disk(&app);
-        *app_handle = Some(app);
+        *self.app.lock().unwrap() = Some(app);
     }
 
     pub fn set_max_item(&self, max: usize) {
@@ -84,6 +83,7 @@ impl History {
         image_width: Option<u32>,
         image_height: Option<u32>,
     ) {
+        let max_history_item = *self.max_item.lock().unwrap();
         let mut items = self.items.lock().unwrap();
 
         if let Some(last) = items.first() {
@@ -104,7 +104,6 @@ impl History {
 
         items.insert(0, item.clone());
 
-        let max_history_item = *self.max_item.lock().unwrap();
         if items.len() > max_history_item {
             items.truncate(max_history_item);
         }

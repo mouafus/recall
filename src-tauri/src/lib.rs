@@ -13,7 +13,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_autostart::init(
             MacosLauncher::LaunchAgent,
-            Some(vec!["--flag1", "--flag2"]),
+            None,
         ))
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .setup(|app| {
@@ -33,7 +33,7 @@ pub fn run() {
 
             let _clipboard_watcher = clipboard::start_clipboard_watcher();
 
-            #[cfg(any(target_os = "linux"))]
+            #[cfg(not(any(target_os = "android", target_os = "ios")))]
             {
                 use tauri::menu::{Menu, MenuItem};
                 use tauri::tray::TrayIconBuilder;

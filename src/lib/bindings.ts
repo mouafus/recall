@@ -11,3 +11,9 @@ export interface ClipboardItem {
   image_width: number | null;
   image_height: number | null;
 }
+
+export interface Settings {
+  max_items: number;
+  shortcut: string;
+  autostart: boolean;
+}

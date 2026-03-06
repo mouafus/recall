@@ -16,20 +16,13 @@ class ClipboardManager {
     }
 
     add(item: IClipboardItem) {
-        const removedIds: string[] = [];
         this.history.update((map) => {
             const newMap = new Map(map);
-            for (const [id, it] of newMap) {
-                if (id !== item.id && it.content === item.content) {
-                    newMap.delete(id);
-                    removedIds.push(id);
-                }
-            }
             newMap.set(item.id, item);
             return newMap;
         });
         this.order.update((arr) => {
-            const next = arr.filter((id) => id !== item.id && !removedIds.includes(id));
+            const next = arr.filter((id) => id !== item.id);
             next.unshift(item.id);
             return next;
         });

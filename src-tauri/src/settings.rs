@@ -1,8 +1,10 @@
 use serde::{Deserialize, Serialize};
 use std::{fs, path::PathBuf};
 use tauri::Manager;
+use ts_rs::TS;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(TS, Serialize, Deserialize, Debug, Clone)]
+#[ts(export, export_to = "../../src/lib/bindings.ts")]
 pub struct Settings {
     pub max_items: usize,
     pub shortcut: String,

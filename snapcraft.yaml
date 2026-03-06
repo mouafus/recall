@@ -1,16 +1,32 @@
 name: recall
 base: core22
 version: '0.1.0'
-summary: Gestionnaire de presse-papiers
+summary: Fast clipboard history manager — search, preview and re-paste anything you've copied
 description: |
-  Recall est une application légère et rapide qui vous permet de stocker,
-  organiser et retrouver facilement les éléments de votre presse-papiers.
-  Développée avec Tauri, elle offre des performances natives tout en
-  utilisant une interface web moderne.
+  Recall captures everything you copy and lets you find it instantly.
+
+  **Features**
+  - Clipboard history for text (plain, HTML, RTF) and images
+  - Real-time search with Ctrl+K
+  - Keyboard navigation (↑ ↓ to browse, Enter to paste)
+  - Global shortcut to open from anywhere (default: Ctrl+Shift+V)
+  - Image preview
+  - Persistent history across sessions (configurable size, default 5000 entries)
+  - Launch at startup
+  - System tray
+
+  Built with Tauri (Rust backend) and SvelteKit — native performance, minimal footprint.
+
+  Source code: https://github.com/mouafus/recall
 
 grade: stable
 confinement: strict
 license: MIT
+
+contact: https://github.com/mouafus/recall/issues
+issues: https://github.com/mouafus/recall/issues
+source-code: https://github.com/mouafus/recall
+website: https://github.com/mouafus/recall
 
 layout:
   /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/webkit2gtk-4.1:

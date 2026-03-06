@@ -1,10 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
+import type { Settings } from "$lib/bindings";
 
-export interface Settings {
-  max_items: number;
-  shortcut: string;
-  autostart: boolean;
-}
+export type { Settings };
 
 export async function getSettings(): Promise<Settings> {
   return await invoke<Settings>("get_settings");
