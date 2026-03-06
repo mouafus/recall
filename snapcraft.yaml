@@ -63,6 +63,10 @@ parts:
       - libatk-adaptor
     override-build: |
       set -eux
+      # Install Node.js 20 LTS
+      curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+      apt-get install -y nodejs
+      # Install Rust
       curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain stable
       export PATH="$HOME/.cargo/bin:$PATH"
       npm install
