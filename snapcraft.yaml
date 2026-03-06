@@ -56,6 +56,8 @@ parts:
       - librsvg2-dev
       - dpkg
       - pkg-config
+      - libxcb-shape0-dev
+      - libxcb-xfixes0-dev
     stage-packages:
       - libwebkit2gtk-4.1-0
       - libayatana-appindicator3-1
