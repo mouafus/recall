@@ -105,7 +105,7 @@
         <div class="h-4"></div>
         {#each $clipboardItemList as item, index}
             <button
-                    class="py-2 px-1.5 text-sm rounded-md text-white w-full {selectedItem.id === item.id ? 'bg-[#323335]' : ''} text-left truncate select-none"
+                    class="py-2 px-1.5 text-sm rounded-md text-white w-full {selectedItem?.id === item.id ? 'bg-[#323335]' : ''} text-left truncate select-none outline-none"
                     tabindex={index}
                     on:dblclick={async () => {
         if(item){
@@ -127,7 +127,7 @@
     <div class="w-3/5 px-2 pt-2 pb-6 h-full overflow-y-auto select-text">
         {#if selectedItem}
             {#if selectedItem.content_type.startsWith('image') && selectedItem.image_base64}
-                <canvas bind:this={canvasEl} class="max-w-full h-auto border border-gray-500 rounded"></canvas>
+                <canvas bind:this={canvasEl} class="block max-w-full h-auto border border-gray-500 rounded"></canvas>
             {:else}
                 <p class="whitespace-pre-wrap text-xs">{selectedItem.content}</p>
             {/if}
@@ -135,14 +135,3 @@
         <div class="h-4"></div>
     </div>
 </section>
-
-
-<style>
-    button {
-        outline: none;
-    }
-
-    canvas {
-        display: block;
-    }
-</style>
