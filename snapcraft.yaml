@@ -37,8 +37,15 @@ apps:
     command: usr/bin/recall
     desktop: usr/share/applications/recall.desktop
     extensions: [ gnome ]
+    environment:
+      # Avoid the WebKitGTK GPU/EGL path that fails inside strict confinement
+      # ("libEGL fatal: did not find extension DRI_Mesa version 1") on many
+      # Linux setups. Forcing software compositing keeps the window rendering.
+      WEBKIT_DISABLE_COMPOSITING_MODE: "1"
+      WEBKIT_DISABLE_DMABUF_RENDERER: "1"
     plugs:
       - removable-media
+      - opengl
 
 parts:
   build-app:

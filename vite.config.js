@@ -6,7 +6,10 @@ const host = process.env.TAURI_DEV_HOST;
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-    plugins: [tailwindcss(), sveltekit()],
+    // sveltekit() must run before tailwindcss() so Svelte splits each component's
+    // <script> from its <style> first; otherwise Tailwind tries to parse JS (e.g.
+    // `derived(...)`) as CSS and fails with "Invalid declaration".
+    plugins: [sveltekit(), tailwindcss()],
 
     // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
     //
